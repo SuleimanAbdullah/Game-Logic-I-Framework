@@ -6,11 +6,16 @@ using UnityEngine.AI;
 public class AI : MonoBehaviour
 {
     [SerializeField]
-    private Transform[] _wayPoints;
+    private List<Transform> _wayPoints;
+
     private int _currentWayPoint = 0;
     private NavMeshAgent _agent;
     private bool _isAgentReachDestination;
-
+    
+    [SerializeField]
+    private GameObject _parentObject;
+    [SerializeField]
+    private Transform _spawnedPosition;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,10 +30,10 @@ public class AI : MonoBehaviour
         {
             if (_isAgentReachDestination == false)
             {
-                if (_currentWayPoint == _wayPoints.Length - 1)
+                if (_currentWayPoint == _wayPoints.Count - 1)
                 {
                     _isAgentReachDestination = true;
-                    _currentWayPoint = _wayPoints.Length;
+                    _currentWayPoint = _wayPoints.Count;
                 }
                 else
                 {
@@ -39,15 +44,18 @@ public class AI : MonoBehaviour
                     _currentWayPoint++;
                     _agent.SetDestination(_wayPoints[_currentWayPoint].position);
                 }
-
+                
             }
+
             else
             {
-                _agent.isStopped = true;
-                Debug.Log("Agent Reach Destinatio: ");
+                _parentObject.SetActive(false);
+                _currentWayPoint = 0;
+                this.gameObject.transform.position = _spawnedPosition.position;
+                _isAgentReachDestination = false;
             }
-        }
-       
 
+        }
     }
+
 }
