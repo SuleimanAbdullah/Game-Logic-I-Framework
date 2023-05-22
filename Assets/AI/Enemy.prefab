@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 665417200377269342}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -5.033, y: 0.034, z: 3.937}
+  m_LocalPosition: {x: -4.86, y: 0.034, z: 5.1870003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -70,7 +70,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 665417200610693423}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -12.78, y: 0.034, z: 3.9369981}
+  m_LocalPosition: {x: -12.45, y: 0.034, z: 5.1869984}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -115,7 +115,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 665417200855640741}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 2.891, y: 0.034, z: 3.8}
+  m_LocalPosition: {x: 3.02, y: 0.034, z: 5.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -160,7 +160,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 665417201154493964}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 19.054, y: 0.034, z: 3.799999}
+  m_LocalPosition: {x: 19.054, y: 0.034, z: 5.049999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -205,7 +205,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 665417202189918228}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 10.974, y: 0.034, z: 3.799999}
+  m_LocalPosition: {x: 11.05, y: 0.034, z: 5.049999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -250,7 +250,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2558387032870599324}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -21.086, y: 0.034, z: 3.936999}
+  m_LocalPosition: {x: -20.99, y: 0.034, z: 5.1869993}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -701,7 +701,7 @@ GameObject:
   - component: {fileID: 5579318223413567394}
   - component: {fileID: 4656642026659599796}
   - component: {fileID: 447757969560120716}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy_model
   m_TagString: AI
   m_Icon: {fileID: 0}
@@ -738,7 +738,7 @@ Animator:
   m_GameObject: {fileID: 5066843826699144755}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 7d06056a526920843bd2a464aa583f6d, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f10e392824b77854e9373522eee4405c, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -774,6 +774,8 @@ MonoBehaviour:
   - {fileID: 665417202189918231}
   - {fileID: 665417201154493967}
   _randomHideWayPointIndex: 0
+  _health: 3
+  _isDead: 0
   _currentState: 0
 --- !u!195 &5579318223413567394
 NavMeshAgent:
@@ -785,7 +787,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 5
+  m_Speed: 3
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -794,7 +796,7 @@ NavMeshAgent:
   m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0.034
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!136 &4656642026659599796

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 {
@@ -8,13 +9,17 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
     public class FPS_Controller : MonoBehaviour
     {
         [Header("Controller Info")]
-        [SerializeField ][Tooltip("How fast can the controller walk?")]
+        [SerializeField]
+        [Tooltip("How fast can the controller walk?")]
         private float _walkSpeed = 3.0f; //how fast the character is walking
-        [SerializeField][Tooltip("How fast can the controller run?")]
+        [SerializeField]
+        [Tooltip("How fast can the controller run?")]
         private float _runSpeed = 7.0f; // how fast the character is running
-        [SerializeField][Tooltip("Set your gravity multiplier")] 
+        [SerializeField]
+        [Tooltip("Set your gravity multiplier")]
         private float _gravity = 1.0f; //how much gravity to apply 
-        [SerializeField][Tooltip("How high can the controller jump?")]
+        [SerializeField]
+        [Tooltip("How high can the controller jump?")]
         private float _jumpHeight = 15.0f; //how high can the character jump
         [SerializeField]
         private bool _isRunning = false; //bool to display if we are running
@@ -23,25 +28,44 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 
         private CharacterController _controller; //reference variable to the character controller component
         private float _yVelocity = 0.0f; //cache our y velocity
-        
 
-        [Header("Headbob Settings")]       
-        [SerializeField][Tooltip("Smooth out the transition from moving to not moving")]
+
+        [Header("Headbob Settings")]
+        [SerializeField]
+        [Tooltip("Smooth out the transition from moving to not moving")]
         private float _smooth = 20.0f; //smooth out the transition from moving to not moving
-        [SerializeField][Tooltip("How quickly the player head bobs")]
+        [SerializeField]
+        [Tooltip("How quickly the player head bobs")]
         private float _walkFrequency = 4.8f; //how quickly the player head bobs when walking
-        [SerializeField][Tooltip("How quickly the player head bobs")]
+        [SerializeField]
+        [Tooltip("How quickly the player head bobs")]
         private float _runFrequency = 7.8f; //how quickly the player head bobs when running
-        [SerializeField][Tooltip("How dramatic the headbob is")][Range(0.0f, 0.2f)]
+        [SerializeField]
+        [Tooltip("How dramatic the headbob is")]
+        [Range(0.0f, 0.2f)]
         private float _heightOffset = 0.05f; //how dramatic the bobbing is
         private float _timer = Mathf.PI / 2; //This is where Sin = 1 -- used to simulate walking forward. 
         private Vector3 _initialCameraPos; //local position where we reset the camera when it's not bobbing
 
+        private bool _isPressed;
+        [SerializeField]
+        private GameObject _muzzleFlash;
+        [SerializeField]
+        private GameObject _firingPosition;
+        [SerializeField]
+        private GameObject _enemybloodParticle;
+
+        [SerializeField]
+        private int _addPointForKillngEnemy;
+
+        private AI _enemy;
         [Header("Camera Settings")]
-        [SerializeField][Tooltip("Control the look sensitivty of the camera")]
+        [SerializeField]
+        [Tooltip("Control the look sensitivty of the camera")]
         private float _lookSensitivity = 5.0f; //mouse sensitivity 
 
         private Camera _fpsCamera;
+
         private void Start()
         {
             _controller = GetComponent<CharacterController>(); //assign the reference variable to the component
@@ -57,11 +81,46 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 Cursor.lockState = CursorLockMode.None;
             }
 
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                GameObject flash = Instantiate(_muzzleFlash, _firingPosition.transform.position, Quaternion.identity);
+                flash.transform.parent = _firingPosition.transform;
+                _isPressed = true;
+            }
+
             FPSController();
             CameraController();
-            HeadBobbing(); 
+            HeadBobbing();
         }
 
+        private void FixedUpdate()
+        {
+            if (_isPressed == true)
+            {
+                _isPressed = false;
+                Ray rayOrigin = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+                RaycastHit hitInfo;
+                if (Physics.Raycast(rayOrigin, out hitInfo, Mathf.Infinity, 1 << 6))
+                {
+                    if (hitInfo.collider.gameObject.layer==6)
+                    {
+                        Debug.Log("HitInfo Name :" + hitInfo.collider.name);
+                        _enemy = hitInfo.collider.GetComponent<AI>();
+                        if (_enemy !=null)
+                        {
+                            _enemy.Damage();
+                        }
+                        Instantiate(_enemybloodParticle, hitInfo.point + (hitInfo.normal * 0.025f), Quaternion.identity);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+               
+            }
+
+        }
         void FPSController()
         {
             float h = Input.GetAxis("Horizontal"); //horizontal inputs (a, d, leftarrow, rightarrow)
@@ -83,7 +142,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                     _crouching = true;
                     _controller.height = 1.0f;
                 }
-                
+
             }
 
             if (Input.GetKey(KeyCode.LeftShift) && _crouching == false) //check if we are holding down left shift
@@ -136,7 +195,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 
             if (h != 0 || v != 0) //Are we moving?
             {
-               
+
                 if (Input.GetKey(KeyCode.LeftShift)) //check if running
                 {
                     _timer += _runFrequency * Time.deltaTime; //increment timer for our sin/cos waves when running
@@ -173,6 +232,11 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 
                 _fpsCamera.transform.localPosition = resetHead; //assign the head position back to the initial cam pos
             }
+        }
+
+        public void AddPointToPlayer(int amount)
+        {
+            _addPointForKillngEnemy += amount;
         }
     }
 }

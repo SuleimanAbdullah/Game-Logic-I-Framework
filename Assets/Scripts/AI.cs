@@ -25,11 +25,13 @@ public class AI : MonoBehaviour
     [SerializeField]
     private int _randomHideWayPointIndex;
 
+    private GameDevHQ.FileBase.Plugins.FPS_Character_Controller.FPS_Controller _player;
+    [SerializeField]
     private int _health = 3;
+    [SerializeField]
     private bool _isDead;
     private Animator _anim;
 
-    private int _pointToGrantToPlayer;
     private enum AIState
     {
         Running,
@@ -43,11 +45,13 @@ public class AI : MonoBehaviour
     private void OnEnable()
     {
         _randomHideWayPointIndex = Random.Range(0, _hidingWaypoints.Count - 1);
+        _health = 3;
         _isDead = false;
     }
-   
+
     void Start()
     {
+        _player = GameObject.Find("Player").GetComponent<GameDevHQ.FileBase.Plugins.FPS_Character_Controller.FPS_Controller>();
         _agent = GetComponent<NavMeshAgent>();
         if (_agent == null)
         {
@@ -70,22 +74,15 @@ public class AI : MonoBehaviour
         switch (_currentState)
         {
             case AIState.Running:
-
                 CalculateAIMovement();
                 break;
+
             case AIState.Hide:
-                // Ability to stop running
-                // when they are at their selected barrier
-                // for a random amount of time.
                 StartCoroutine(Hide());
-
                 break;
-            case AIState.Death:
-                Damage();
-                //Trigger Death when AI is shot down 
-                //Communicate with Animation Scripts 
-                //50 Points Awarded
 
+            case AIState.Death:
+                Die();
                 break;
         }
     }
@@ -97,14 +94,11 @@ public class AI : MonoBehaviour
             if (_isAgentReachDestination == false)
             {
                 AIMovement();
-                // Intelligently select barriers to run and hide behind.
-                // Always moving forward towards the end point
             }
 
             else
             {
                 AIIntrudePlayerGate();
-
             }
         }
     }
@@ -126,16 +120,22 @@ public class AI : MonoBehaviour
             _isAgentReachDestination = true;
             _currentWayPoint = _wayPoints.Count;
         }
-       
+
         else
         {
+
             if (_isAgentHiding == true)
             {
-                Debug.Log("Hide behind the Pillar");
-                _agent.SetDestination(_hidingWaypoints[_randomHideWayPointIndex].position);
-                if (transform.position.x == _hidingWaypoints[_randomHideWayPointIndex].position.x &&_currentState ==AIState.Running)
+
+                if (transform.position.x == _hidingWaypoints[_randomHideWayPointIndex].position.x && _currentState == AIState.Running)
                 {
                     _currentState = AIState.Hide;
+                }
+                else
+                {
+                    _anim.SetFloat("Speed", 5f);
+                    _anim.SetBool("Hiding", false);
+                    _agent.SetDestination(_hidingWaypoints[_randomHideWayPointIndex].position);
                 }
             }
             else
@@ -145,43 +145,52 @@ public class AI : MonoBehaviour
                 {
                     _isAgentReachDestination = false;
                 }
+                _anim.SetFloat("Speed", 5f);
                 _currentWayPoint++;
                 _agent.SetDestination(_wayPoints[_currentWayPoint].position);
             }
-           
+
         }
-       
+
     }
 
     IEnumerator Hide()
     {
+        _anim.SetFloat("Speed", 0);
+        _anim.SetBool("Hiding", true);
         _agent.isStopped = true;
-        yield return new WaitForSeconds(Random.Range(3f,6f));
+        yield return new WaitForSeconds(Random.Range(3f, 6f));
         _isAgentHiding = false;
         _agent.isStopped = false;
-        _currentState = AIState.Running;
-        Debug.Log("Deactivate this bool"); 
+        _anim.SetBool("Hiding", false);
+        if (_isDead==false)
+        {
+            _currentState = AIState.Running;
+        }
     }
 
-    void Damage()
+    public void Damage()
     {
-        if (_isDead ==false)
+        if (_isDead == false)
         {
             _health--;
         }
-        if (_health ==0 && _isDead ==false)
+        if (_health < 1)
         {
             _health = 0;
             _isDead = true;
-            _agent.isStopped = true;
-            _anim.SetTrigger("OnDeath");
-            Destroy(this, 3f);
-            //Player add score if you kill enemy
+            _currentState = AIState.Death;
         }
+
     }
 
-    public void ActivateDeath()
+    private void Die()
     {
-        _currentState = AIState.Death;
+        _agent.isStopped = true;
+        _anim.SetFloat("Speed", 0);
+        _anim.SetBool("Hiding", false);
+        _anim.SetTrigger("Death");
+        _player.AddPointToPlayer(50);
+        //Player add score if you kill enemy
     }
 }

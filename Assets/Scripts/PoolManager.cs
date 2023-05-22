@@ -34,10 +34,6 @@ public class PoolManager : MonoBehaviour
     private void Awake()
     {
         _instance = this;
-    }
-
-    private void Start()
-    {
         _aiObjects = GenerateAI();
     }
 

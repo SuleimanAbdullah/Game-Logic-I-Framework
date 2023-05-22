@@ -22,4 +22,8 @@ public class GameManager : MonoBehaviour
         _instance = this;
     }
 
+    void  Start()
+    {
+        Cursor.visible = false;
+    }
 }
