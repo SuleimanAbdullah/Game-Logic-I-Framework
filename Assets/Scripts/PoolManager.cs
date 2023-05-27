@@ -11,19 +11,26 @@ public class PoolManager : MonoBehaviour
     [SerializeField]
     private List<GameObject> _aiObjects;
 
+    GameObject _newAIEnemy;
+
     [SerializeField]
     private int _amountOfAI;
+    [SerializeField]
+    public int _aiSpawnedCount;
+
+    private int _remainingAI;
+
 
     [SerializeField]
     private Transform _spawnPos;
-    
+
     private static PoolManager _instance;
 
     public static PoolManager Instance
     {
         get
         {
-            if (_instance ==null)
+            if (_instance == null)
             {
                 Debug.LogError("Pool Manager is Null:");
             }
@@ -37,6 +44,11 @@ public class PoolManager : MonoBehaviour
         _aiObjects = GenerateAI();
     }
 
+    private void Start()
+    {
+        _remainingAI = _amountOfAI;
+    }
+
     private List<GameObject> GenerateAI()
     {
         for (int i = 0; i < _amountOfAI; i++)
@@ -46,7 +58,7 @@ public class PoolManager : MonoBehaviour
             enemy.SetActive(false);
             _aiObjects.Add(enemy);
         }
-        
+
         return _aiObjects;
     }
 
@@ -54,17 +66,35 @@ public class PoolManager : MonoBehaviour
     {
         foreach (var enemy in _aiObjects)
         {
-            if (enemy.activeInHierarchy == false)
+            if (enemy.activeInHierarchy == false && _aiSpawnedCount >0)
             {
                 enemy.SetActive(true);
+                _aiSpawnedCount--;
+                
+                if (_aiSpawnedCount ==0)
+                {
+                    _aiSpawnedCount = 0;
+                }
+
                 return enemy;
             }
         }
 
-        GameObject newAIEnemy = Instantiate(_objectTobePooled);
-        newAIEnemy.transform.parent = _aiContainer.transform;
-        _aiObjects.Add(newAIEnemy);
 
-        return newAIEnemy;
+        if (_amountOfAI < _aiObjects.Count)
+        {
+            _newAIEnemy = Instantiate(_objectTobePooled);
+            _newAIEnemy.transform.parent = _aiContainer.transform;
+            _aiObjects.Add(_newAIEnemy);
+        }
+
+
+        return _newAIEnemy;
+    }
+
+   public void EnemyCount()
+    {
+        _remainingAI -= 1;
+        UIManager.Instance.UpdateEnemyCount(_remainingAI);
     }
 }

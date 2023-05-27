@@ -32,6 +32,9 @@ public class AI : MonoBehaviour
     private bool _isDead;
     private Animator _anim;
 
+    private int _totalEnemy = 10;
+  
+    private int _leftEnemy;
     private enum AIState
     {
         Running,
@@ -42,6 +45,8 @@ public class AI : MonoBehaviour
     [SerializeField]
     private AIState _currentState;
 
+    private int _scorePoint =50;
+
     private void OnEnable()
     {
         _randomHideWayPointIndex = Random.Range(0, _hidingWaypoints.Count - 1);
@@ -51,6 +56,7 @@ public class AI : MonoBehaviour
 
     void Start()
     {
+        _leftEnemy = _totalEnemy;
         _player = GameObject.Find("Player").GetComponent<GameDevHQ.FileBase.Plugins.FPS_Character_Controller.FPS_Controller>();
         _agent = GetComponent<NavMeshAgent>();
         if (_agent == null)
@@ -163,7 +169,7 @@ public class AI : MonoBehaviour
         _isAgentHiding = false;
         _agent.isStopped = false;
         _anim.SetBool("Hiding", false);
-        if (_isDead==false)
+        if (_isDead == false)
         {
             _currentState = AIState.Running;
         }
@@ -175,10 +181,12 @@ public class AI : MonoBehaviour
         {
             _health--;
         }
-        if (_health < 1)
+        if (_health < 1 && _isDead==false)
         {
             _health = 0;
             _isDead = true;
+            PoolManager.Instance.EnemyCount();
+            _player.AddPointToPlayer(_scorePoint);
             _currentState = AIState.Death;
         }
 
@@ -190,7 +198,14 @@ public class AI : MonoBehaviour
         _anim.SetFloat("Speed", 0);
         _anim.SetBool("Hiding", false);
         _anim.SetTrigger("Death");
-        _player.AddPointToPlayer(50);
-        //Player add score if you kill enemy
+       
+        StartCoroutine(EnemyDisappearAfterDeath());
+    }
+
+    IEnumerator EnemyDisappearAfterDeath()
+    {
+        yield return new WaitForSeconds(5f);
+        _parentObject.SetActive(false);
+
     }
 }

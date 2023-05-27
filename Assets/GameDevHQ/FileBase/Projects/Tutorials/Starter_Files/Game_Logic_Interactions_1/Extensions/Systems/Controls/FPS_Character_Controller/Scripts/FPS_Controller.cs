@@ -55,7 +55,6 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         [SerializeField]
         private GameObject _enemybloodParticle;
 
-        [SerializeField]
         private int _addPointForKillngEnemy;
 
         private AI _enemy;
@@ -237,6 +236,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         public void AddPointToPlayer(int amount)
         {
             _addPointForKillngEnemy += amount;
+            UIManager.Instance.UpdateScore(_addPointForKillngEnemy);
         }
     }
 }
