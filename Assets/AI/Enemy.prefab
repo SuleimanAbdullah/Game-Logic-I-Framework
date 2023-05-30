@@ -777,6 +777,10 @@ MonoBehaviour:
   _health: 3
   _isDead: 0
   _currentState: 0
+  _clipsToPlay:
+  - {fileID: 8300000, guid: 6fc19aef25cc2a5439189984874e6250, type: 3}
+  - {fileID: 8300000, guid: 94f056eade73c14448c664415272bb18, type: 3}
+  _breachSound: {fileID: 8300000, guid: 04fec563dfb6230489053657271fd5c1, type: 3}
 --- !u!195 &5579318223413567394
 NavMeshAgent:
   m_ObjectHideFlags: 0

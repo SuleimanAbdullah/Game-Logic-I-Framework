@@ -47,6 +47,12 @@ public class AI : MonoBehaviour
 
     private int _scorePoint =50;
 
+    [SerializeField]
+    private AudioClip[] _clipsToPlay;
+
+    [SerializeField]
+    private AudioClip _breachSound;
+
     private void OnEnable()
     {
         _randomHideWayPointIndex = Random.Range(0, _hidingWaypoints.Count - 1);
@@ -104,6 +110,7 @@ public class AI : MonoBehaviour
 
             else
             {
+                AudioManager.Instance.PlayVoice(_breachSound);
                 AIIntrudePlayerGate();
             }
         }
@@ -179,6 +186,11 @@ public class AI : MonoBehaviour
     {
         if (_isDead == false)
         {
+            AudioManager.Instance.PlayVoice(_clipsToPlay[0]);
+            if (_health ==1)
+            {
+                AudioManager.Instance.PlayVoice(_clipsToPlay[1]);
+            }
             _health--;
         }
         if (_health < 1 && _isDead==false)

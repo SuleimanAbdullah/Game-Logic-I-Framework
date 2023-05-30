@@ -65,6 +65,11 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 
         private Camera _fpsCamera;
 
+        [SerializeField]
+        private AudioClip _sniper;
+        [SerializeField]
+        private AudioClip _barrierSound;
+
         private void Start()
         {
             _controller = GetComponent<CharacterController>(); //assign the reference variable to the component
@@ -99,7 +104,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 _isPressed = false;
                 Ray rayOrigin = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
                 RaycastHit hitInfo;
-                if (Physics.Raycast(rayOrigin, out hitInfo, Mathf.Infinity, 1 << 6))
+                if (Physics.Raycast(rayOrigin, out hitInfo, Mathf.Infinity, 1 << 6 | 1<<7))
                 {
                     if (hitInfo.collider.gameObject.layer==6)
                     {
@@ -111,12 +116,17 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                         }
                         Instantiate(_enemybloodParticle, hitInfo.point + (hitInfo.normal * 0.025f), Quaternion.identity);
                     }
+                    if (hitInfo.collider.gameObject.layer ==7)
+                    {
+                        AudioManager.Instance.PlayVoice(_barrierSound);
+                    }
                     else
                     {
                         return;
                     }
                 }
-               
+
+               AudioManager.Instance.PlayVoice(_sniper);
             }
 
         }
