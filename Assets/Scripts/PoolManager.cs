@@ -5,6 +5,13 @@ using UnityEngine;
 public class PoolManager : MonoBehaviour
 {
     [SerializeField]
+    private GameObject _TransitionCut;
+    [SerializeField]
+    private GameObject _winText;
+    [SerializeField]
+    private GameObject _looseText;
+
+    [SerializeField]
     private GameObject _aiContainer;
     [SerializeField]
     private GameObject _objectTobePooled;
@@ -19,6 +26,8 @@ public class PoolManager : MonoBehaviour
     public int _aiSpawnedCount;
 
     private int _remainingAI;
+    private int _amountOfAIBreach;
+    private int _totalAI;
 
 
     [SerializeField]
@@ -46,7 +55,14 @@ public class PoolManager : MonoBehaviour
 
     private void Start()
     {
+        _TransitionCut.SetActive(false);
+        _winText.SetActive(false);
+        _looseText.SetActive(false);
+
         _remainingAI = _amountOfAI;
+        _totalAI = _amountOfAI;
+
+        _aiSpawnedCount = _amountOfAI;
     }
 
     private List<GameObject> GenerateAI()
@@ -58,7 +74,6 @@ public class PoolManager : MonoBehaviour
             enemy.SetActive(false);
             _aiObjects.Add(enemy);
         }
-
         return _aiObjects;
     }
 
@@ -66,12 +81,12 @@ public class PoolManager : MonoBehaviour
     {
         foreach (var enemy in _aiObjects)
         {
-            if (enemy.activeInHierarchy == false && _aiSpawnedCount >0)
+            if (enemy.activeInHierarchy == false && _aiSpawnedCount > 0)
             {
                 enemy.SetActive(true);
                 _aiSpawnedCount--;
-                
-                if (_aiSpawnedCount ==0)
+
+                if (_aiSpawnedCount == 0)
                 {
                     _aiSpawnedCount = 0;
                 }
@@ -80,7 +95,6 @@ public class PoolManager : MonoBehaviour
             }
         }
 
-
         if (_amountOfAI < _aiObjects.Count)
         {
             _newAIEnemy = Instantiate(_objectTobePooled);
@@ -88,13 +102,42 @@ public class PoolManager : MonoBehaviour
             _aiObjects.Add(_newAIEnemy);
         }
 
-
         return _newAIEnemy;
     }
 
-   public void EnemyCount()
+    public void EnemyCount()
     {
         _remainingAI -= 1;
+        if (_remainingAI < 1)//Kill all AI to Win aka wining condition
+        {
+            //Win Screen
+            _TransitionCut.SetActive(true);
+            _winText.SetActive(false);
+        }
         UIManager.Instance.UpdateEnemyCount(_remainingAI);
+    }
+
+    public void EnemyReachDestination()
+    {
+        _amountOfAIBreach++;
+        if (_amountOfAIBreach == _totalAI / 2)//if 50% AI reach destination you loose aka loose condition
+        {
+            //enable loose screen.
+            _TransitionCut.SetActive(true);
+            _looseText.SetActive(true);
+            StartCoroutine(WaitBeforeDiactivateAI());
+        }
+    }
+
+    IEnumerator WaitBeforeDiactivateAI()
+    {
+        foreach (var enemy in _aiObjects)
+        {
+            if (enemy.activeInHierarchy == true)
+            {
+                yield return new WaitForSeconds(1.5f);
+                enemy.SetActive(false);
+            }
+        }
     }
 }

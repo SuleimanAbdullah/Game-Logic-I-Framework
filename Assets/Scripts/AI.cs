@@ -32,9 +32,6 @@ public class AI : MonoBehaviour
     private bool _isDead;
     private Animator _anim;
 
-    private int _totalEnemy = 10;
-  
-    private int _leftEnemy;
     private enum AIState
     {
         Running,
@@ -62,7 +59,6 @@ public class AI : MonoBehaviour
 
     void Start()
     {
-        _leftEnemy = _totalEnemy;
         _player = GameObject.Find("Player").GetComponent<GameDevHQ.FileBase.Plugins.FPS_Character_Controller.FPS_Controller>();
         _agent = GetComponent<NavMeshAgent>();
         if (_agent == null)
@@ -110,6 +106,7 @@ public class AI : MonoBehaviour
 
             else
             {
+                PoolManager.Instance.EnemyReachDestination();
                 AudioManager.Instance.PlayVoice(_breachSound);
                 AIIntrudePlayerGate();
             }

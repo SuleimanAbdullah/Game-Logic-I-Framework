@@ -38,7 +38,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         _scoreText.text = "Score:" + 0;
-        _enemyCountText.text = "EnemyCount: " + 3;
+        _enemyCountText.text = "EnemyCount: " + 4;
         _isTimeRunning = true;
     }
 

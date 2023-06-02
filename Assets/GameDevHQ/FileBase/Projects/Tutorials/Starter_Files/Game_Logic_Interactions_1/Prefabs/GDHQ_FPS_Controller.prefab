@@ -672,8 +672,9 @@ MonoBehaviour:
   _firingPosition: {fileID: 1732051526}
   _enemybloodParticle: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a,
     type: 3}
-  _addPointForKillngEnemy: 0
   _lookSensitivity: 5
+  _sniper: {fileID: 8300000, guid: d86acc8a8da224c4eba0a71c34a1c7cc, type: 3}
+  _barrierSound: {fileID: 8300000, guid: a0d9fe07920199543ad86fbfccb89b6a, type: 3}
 --- !u!143 &3559926251135889283
 CharacterController:
   m_ObjectHideFlags: 0

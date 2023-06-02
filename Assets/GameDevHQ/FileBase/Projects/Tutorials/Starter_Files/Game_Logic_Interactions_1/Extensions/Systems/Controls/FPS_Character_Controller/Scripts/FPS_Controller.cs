@@ -104,31 +104,24 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 _isPressed = false;
                 Ray rayOrigin = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
                 RaycastHit hitInfo;
-                if (Physics.Raycast(rayOrigin, out hitInfo, Mathf.Infinity, 1 << 6 | 1<<7))
+                if (Physics.Raycast(rayOrigin, out hitInfo, Mathf.Infinity, 1 << 6 | 1 << 7))
                 {
-                    if (hitInfo.collider.gameObject.layer==6)
+                    if (hitInfo.collider.gameObject.layer == 6)
                     {
-                        Debug.Log("HitInfo Name :" + hitInfo.collider.name);
                         _enemy = hitInfo.collider.GetComponent<AI>();
-                        if (_enemy !=null)
+                        if (_enemy != null)
                         {
                             _enemy.Damage();
                         }
                         Instantiate(_enemybloodParticle, hitInfo.point + (hitInfo.normal * 0.025f), Quaternion.identity);
                     }
-                    if (hitInfo.collider.gameObject.layer ==7)
+                    if (hitInfo.collider.gameObject.layer == 7)
                     {
                         AudioManager.Instance.PlayVoice(_barrierSound);
                     }
-                    else
-                    {
-                        return;
-                    }
                 }
-
-               AudioManager.Instance.PlayVoice(_sniper);
+                AudioManager.Instance.PlayVoice(_sniper);
             }
-
         }
         void FPSController()
         {
