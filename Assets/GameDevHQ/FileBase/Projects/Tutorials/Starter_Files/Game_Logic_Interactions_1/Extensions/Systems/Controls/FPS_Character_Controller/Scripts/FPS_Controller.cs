@@ -69,6 +69,8 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         private AudioClip _sniper;
         [SerializeField]
         private AudioClip _barrierSound;
+        [SerializeField]
+        private GameObject _explosionPrefab;
 
         private void Start()
         {
@@ -104,7 +106,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                 _isPressed = false;
                 Ray rayOrigin = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
                 RaycastHit hitInfo;
-                if (Physics.Raycast(rayOrigin, out hitInfo, Mathf.Infinity, 1 << 6 | 1 << 7))
+                if (Physics.Raycast(rayOrigin, out hitInfo, Mathf.Infinity, 1 << 6 | 1 << 7 | 1 << 8))
                 {
                     if (hitInfo.collider.gameObject.layer == 6)
                     {
@@ -118,6 +120,18 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                     if (hitInfo.collider.gameObject.layer == 7)
                     {
                         AudioManager.Instance.PlayVoice(_barrierSound);
+                    }
+                    if (hitInfo.collider.gameObject.layer == 8)
+                    {
+                        ExplosionBarrel explosion = hitInfo.collider.GetComponent<ExplosionBarrel>();
+                        if (explosion != null)
+                        {
+                            explosion.TriggerExplosion();
+                            StartCoroutine(explosion.ExplosionFireExtinguishedRoutine());
+                        }
+                        GameObject fire = Instantiate(_explosionPrefab, hitInfo.transform.position +
+                            new Vector3(0, 0.5f, 0), Quaternion.identity);
+                       
                     }
                 }
                 AudioManager.Instance.PlayVoice(_sniper);

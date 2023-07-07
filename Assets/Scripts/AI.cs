@@ -36,13 +36,14 @@ public class AI : MonoBehaviour
     {
         Running,
         Hide,
-        Death
+        Death,
+        Ragdoll
     }
 
     [SerializeField]
     private AIState _currentState;
 
-    private int _scorePoint =50;
+    private int _scorePoint = 50;
 
     [SerializeField]
     private AudioClip[] _clipsToPlay;
@@ -50,11 +51,19 @@ public class AI : MonoBehaviour
     [SerializeField]
     private AudioClip _breachSound;
 
+    private Rigidbody[] _rigidBodies;
+
     private void OnEnable()
     {
         _randomHideWayPointIndex = Random.Range(0, _hidingWaypoints.Count - 1);
         _health = 3;
         _isDead = false;
+    }
+
+    private void Awake()
+    {
+        _rigidBodies = GetComponentsInChildren<Rigidbody>();
+        _anim = GetComponent<Animator>();
     }
 
     void Start()
@@ -77,8 +86,6 @@ public class AI : MonoBehaviour
 
     void Update()
     {
-
-
         switch (_currentState)
         {
             case AIState.Running:
@@ -91,6 +98,10 @@ public class AI : MonoBehaviour
 
             case AIState.Death:
                 Die();
+                break;
+
+            case AIState.Ragdoll:
+                ActivateRagdoll();
                 break;
         }
     }
@@ -159,9 +170,7 @@ public class AI : MonoBehaviour
                 _currentWayPoint++;
                 _agent.SetDestination(_wayPoints[_currentWayPoint].position);
             }
-
         }
-
     }
 
     IEnumerator Hide()
@@ -184,13 +193,13 @@ public class AI : MonoBehaviour
         if (_isDead == false)
         {
             AudioManager.Instance.PlayVoice(_clipsToPlay[0]);
-            if (_health ==1)
+            if (_health == 1)
             {
                 AudioManager.Instance.PlayVoice(_clipsToPlay[1]);
             }
             _health--;
         }
-        if (_health < 1 && _isDead==false)
+        if (_health < 1 && _isDead == false)
         {
             _health = 0;
             _isDead = true;
@@ -198,7 +207,6 @@ public class AI : MonoBehaviour
             _player.AddPointToPlayer(_scorePoint);
             _currentState = AIState.Death;
         }
-
     }
 
     private void Die()
@@ -207,7 +215,7 @@ public class AI : MonoBehaviour
         _anim.SetFloat("Speed", 0);
         _anim.SetBool("Hiding", false);
         _anim.SetTrigger("Death");
-       
+
         StartCoroutine(EnemyDisappearAfterDeath());
     }
 
@@ -216,5 +224,20 @@ public class AI : MonoBehaviour
         yield return new WaitForSeconds(5f);
         _parentObject.SetActive(false);
 
+    }
+
+    public void ActivateRagdoll()
+    {
+        foreach (var rigidBody in _rigidBodies)
+        {
+            rigidBody.isKinematic = false;
+        }
+        _agent.isStopped = true;
+        _anim.enabled = false;
+    }
+
+    public void RagdollState()
+    {
+        _currentState = AIState.Ragdoll;
     }
 }

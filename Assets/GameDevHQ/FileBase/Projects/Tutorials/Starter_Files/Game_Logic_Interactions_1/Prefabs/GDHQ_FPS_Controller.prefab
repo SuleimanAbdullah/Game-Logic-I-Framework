@@ -614,6 +614,7 @@ GameObject:
   - component: {fileID: 3522221881866731913}
   - component: {fileID: 3534858390546826023}
   - component: {fileID: 3559926251135889283}
+  - component: {fileID: 1634349936}
   m_Layer: 0
   m_Name: GDHQ_FPS_Controller
   m_TagString: Untagged
@@ -675,6 +676,8 @@ MonoBehaviour:
   _lookSensitivity: 5
   _sniper: {fileID: 8300000, guid: d86acc8a8da224c4eba0a71c34a1c7cc, type: 3}
   _barrierSound: {fileID: 8300000, guid: a0d9fe07920199543ad86fbfccb89b6a, type: 3}
+  _explosionPrefab: {fileID: 8194992990867289339, guid: 99bc28c0d45f51c4fbac01080b73edc7,
+    type: 3}
 --- !u!143 &3559926251135889283
 CharacterController:
   m_ObjectHideFlags: 0
@@ -693,3 +696,36 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1634349936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3503760010013013579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Events:
+    m_Signals:
+    - {fileID: 0}
+    - {fileID: 11400000, guid: 727b3218e865d724ca2e6992a50f8786, type: 2}
+    m_Events:
+    - m_PersistentCalls:
+        m_Calls: []
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 3534858390546826023}
+          m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2

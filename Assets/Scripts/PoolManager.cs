@@ -112,7 +112,7 @@ public class PoolManager : MonoBehaviour
         {
             //Win Screen
             _TransitionCut.SetActive(true);
-            _winText.SetActive(false);
+            _winText.SetActive(true);
         }
         UIManager.Instance.UpdateEnemyCount(_remainingAI);
     }
